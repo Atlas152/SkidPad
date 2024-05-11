@@ -47,9 +47,20 @@ car.kr2 = (car.krs2 .* car.krp2) ./ (car.krs2 + car.krp2);
 car.kr = car.kr1 + car.kr2;
 
 %% Load Transfer Coefficients
+%niu: deltaFi = niui*m*ay
 car.niu1 = (car.kr1.*car.kr2)./(car.t1.*car.kr).*((car.h-car.q)./car.kr2 + (car.a2.*car.q1)./(car.l.*car.krs1) + (car.a2.*car.q1)./(car.l.*car.krs2) + (car.a2.*car.q1 + car.a1.*car.q2)./(car.l.*car.krp2));
 car.niu2 = (car.kr1.*car.kr2)./(car.t2.*car.kr).*((car.h-car.q)./car.kr1 + (car.a1.*car.q2)./(car.l.*car.krs1) + (car.a1.*car.q2)./(car.l.*car.krs2) + (car.a2.*car.q1 + car.a1.*car.q2)./(car.l.*car.krp1));
 %% Roll Angle Coefficients
+%rhos: relation between suspension roll angle and lateral acceleration
+car.rhos1 = (car.kr1.*car.kr2)./(car.krs1.*car.kr).*((car.h-car.q)./car.kr2 - (car.a2.*car.q1)./(car.l.*car.krp1) + (car.a1.*car.q2)./(car.l.*car.krp2));
+car.rhos2 = (car.kr1.*car.kr2)./(car.krs2.*car.kr).*((car.h-car.q)./car.kr1 - (car.a1.*car.q2)./(car.l.*car.krp2) + (car.a2.*car.q1)./(car.l.*car.krp1));
+
+%rhop: relation between tyre roll angle and lateral acceleration
+car.eta1 = (car.kr1.*(car.h-car.q)./car.kr + (car.a2.*car.q1)./car.l)./car.t1;
+car.eta2 = (car.kr2.*(car.h-car.q)./car.kr + (car.a1.*car.q2)./car.l)./car.t2;
+
+car.rhop1 = (car.eta1.*car.t1)./car.krp1;
+car.rhop2 = (car.eta2.*car.t2)./car.krp2;
 
 %% Camber Gain Coefficients
 % Camber gain with heave (suspension)
@@ -57,10 +68,14 @@ car.dCamberdz1 = -1./car.c1;
 car.dCamberdz2 = -1./car.c2;
 % Camber gain with roll
 % Suspension Roll
-car.dCamberdrs1 = -(car.t1./2 - car.c1);
-car.dCamberdrs2 = -(car.t2./2 - car.c2);
+car.dCamberdrs1 = -(car.t1./2 - car.c1)./car.c1;
+car.dCamberdrs2 = -(car.t2./2 - car.c2)./car.c1;
 % Tyre Roll
 car.dCamberdrp1 = 1;
-car.dCamberdrs2 = 1;
+car.dCamberdrp2 = 1;
+%chi: relation between camber variation due to roll and lateral
+%acceleration (dGammai = chii*m*ay)
+car.chi1 = (-(car.t1./2 - car.c1)./car.c1).*car.rhos1 + car.rhop1;
+car.chi2 = (-(car.t2./2 - car.c2)./car.c2).*car.rhos2 + car.rhop2;
 
 end
