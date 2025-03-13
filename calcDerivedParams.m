@@ -1,4 +1,4 @@
-function  car = calcDerivedParams(car)
+ function  car = calcDerivedParams(car)
 
 %% Dimensions
 car.l = car.a1 + car.a2;
